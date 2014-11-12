@@ -29,7 +29,9 @@ describe Paypal::Payment::Common::Amount do
       end
       amount = Paypal::Payment::Common::Amount.new attributes
       keys.each do |key|
-        expect(amount.send(key)).to eq(10.25)
+        actual = amount.send(key)
+        expect(actual).to be_a(BigDecimal)
+        expect(actual).to eq BigDecimal('10.25')
       end
     end
   end
