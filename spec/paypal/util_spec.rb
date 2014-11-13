@@ -8,7 +8,7 @@ describe Paypal::Util do
       expect(Paypal::Util.formatted_amount(BigDecimal('10.02'))).to eq('10.02')
       expect(Paypal::Util.formatted_amount(BigDecimal('10.2'))).to eq('10.20')
       expect(Paypal::Util.formatted_amount(BigDecimal('10.24'))).to eq('10.24')
-      expect(Paypal::Util.formatted_amount(BigDecimal('10.255'))).to eq('10.25')
+      expect(Paypal::Util.formatted_amount(BigDecimal('10.255'))).to eq('10.26')
     end
   end
 
