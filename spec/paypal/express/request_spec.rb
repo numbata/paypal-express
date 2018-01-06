@@ -8,7 +8,8 @@ describe Paypal::Express::Request do
       self._sent_params_ = params
       post_without_logging method, params
     end
-    alias_method_chain :post, :logging
+    alias_method :post_without_logging, :post
+    alias_method :post, :post_with_logging
   end
 
   let(:return_url) { 'http://example.com/success' }
