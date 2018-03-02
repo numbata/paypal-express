@@ -8,7 +8,10 @@ module Paypal
     end
 
     def self.to_numeric(x)
-      decimal = BigDecimal(x.to_s)
+      string = x.to_s
+      string = "0" if string == ""  # Ruby 2.5 compatibility.
+
+      decimal = BigDecimal(string)
 
       if decimal == x.to_i
         x.to_i
