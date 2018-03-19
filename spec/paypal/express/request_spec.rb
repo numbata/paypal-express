@@ -40,7 +40,7 @@ describe Paypal::Express::Request do
       items << Paypal::Payment::Request::Item.new(
         :name => "Item#{index.to_s}",
         :description => "A new Item #{index.to_s}",
-        :amount => 50.00,
+        amount: BigDecimal('50.00'),
         :quantity => 1
       )
     end
@@ -267,20 +267,20 @@ describe Paypal::Express::Request do
   describe "#capture!" do
     it 'should return Paypal::Express::Response' do
       fake_response 'DoCapture/success'
-      response = instance.capture! 'authorization_id', 181.98, :BRL
+      response = instance.capture! 'authorization_id', BigDecimal('181.98'), :BRL
       expect(response).to be_instance_of Paypal::Express::Response
     end
 
     it 'should call DoExpressCheckoutPayment' do
       expect do
-        instance.capture! 'authorization_id', 181.98, :BRL
+        instance.capture! 'authorization_id', BigDecimal('181.98'), :BRL
       end.to request_to nvp_endpoint, :post
 
       expect(instance._method_).to eq(:DoCapture)
       expect(instance._sent_params_).to eq({
         :AUTHORIZATIONID => 'authorization_id',
         :COMPLETETYPE => 'Complete',
-        :AMT => 181.98,
+        AMT: BigDecimal('181.98'),
         :CURRENCYCODE => :BRL
       })
     end
