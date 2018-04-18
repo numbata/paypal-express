@@ -50,7 +50,7 @@ module Paypal
       def handle_response
         response = yield
         response = CGI.parse(response).inject({}) do |res, (k, v)|
-          res.merge!(k.to_sym => v.first)
+          res.merge!(k.to_sym => v.first.to_s)
         end
         case response[:ACK]
         when 'Success', 'SuccessWithWarning'
