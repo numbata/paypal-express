@@ -28,5 +28,10 @@ describe Paypal::Util do
       expect(Paypal::Util.to_numeric('10.24')).to eq(BigDecimal('10.24'))
       expect(Paypal::Util.to_numeric('10.25')).to eq(BigDecimal('10.25'))
     end
+
+    it 'returns zero for blank values' do
+      expect(Paypal::Util.to_numeric(nil)).to be_zero
+      expect(Paypal::Util.to_numeric('')).to be_zero
+    end
   end
 end
