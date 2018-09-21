@@ -5,7 +5,7 @@ module Paypal
 
     def self.formatted_amount(x)
       x = '0' if x == '' || x.nil?
-      sprintf '%0.2f', BigDecimal.new(x.to_s).round(2)
+      sprintf '%0.2f', BigDecimal.new(x.to_s)
     end
 
     def self.to_numeric(x)
@@ -14,7 +14,12 @@ module Paypal
 
       decimal = BigDecimal(string)
 
-      if decimal == x.to_i
+      if decimal != BigDecimal(string).round(2)
+        raise ArgumentError.new(
+          'Precision cannot be higher than two decimal places. ' \
+          'Truncate or round first.'
+        )
+      elsif decimal == x.to_i
         x.to_i
       else
         decimal

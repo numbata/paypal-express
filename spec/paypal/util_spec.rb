@@ -33,5 +33,9 @@ describe Paypal::Util do
       expect(Paypal::Util.to_numeric(nil)).to be_zero
       expect(Paypal::Util.to_numeric('')).to be_zero
     end
+
+    it 'raises an ArgumentError when precision is higher than 2 decimals' do
+      expect { Paypal::Util.to_numeric('1.234') }.to raise_error(ArgumentError)
+    end
   end
 end
