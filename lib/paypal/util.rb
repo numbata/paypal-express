@@ -5,7 +5,7 @@ module Paypal
 
     def self.formatted_amount(x)
       x = '0' if x == '' || x.nil?
-      sprintf '%0.2f', BigDecimal.new(x.to_s)
+      sprintf '%0.2f', BigDecimal(x.to_s)
     end
 
     def self.to_numeric(x)
