@@ -6,6 +6,11 @@ Express Checkout for Digital Goods is also supported.
 
 {<img src="https://travis-ci.org/ianfleeton/paypal-express.svg" />}[https://travis-ci.org/ianfleeton/paypal-express]
 
+== Deprecation warning
+
+Many, or perhaps all, of the APIs used in this gem have been {deprecated}[https://developer.paypal.com/docs/archive/express-checkout/] since January 2017.
+Exercise caution with the values returned by the APIs.
+For example, it has been {reported}[https://github.com/ianfleeton/paypal-express/issues/21] that GetTransaction can return incorrect values for a payer's verification status.
 
 == Why this fork?
 
