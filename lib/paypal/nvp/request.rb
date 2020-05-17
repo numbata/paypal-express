@@ -40,18 +40,25 @@ module Paypal
       private
 
       def post(method, params)
-        Faraday.post(self.class.endpoint, common_params.merge(params).merge(:METHOD => method))
+        Paypal.connection.post do |req|
+          req.url self.class.endpoint
+          req.body = common_params
+            .merge(params)
+            .merge(:METHOD => method)
+            .to_query
+        end
       end
 
       def handle_response
         response = yield
-        raise Exception::HttpError.new(response.status, response.reason_phrase, response.body) unless (200..310).include?(response.status)
+        unless (200..310).include?(response.status)
+          raise Exception::HttpError.new(response.status, response.reason_phrase, response.body)
+        end
 
         result = CGI
           .parse(response.body)
           .each_with_object({}) { |(k, v), obj| obj[k.to_sym] = v.first.to_s }
-
-        raise Exception::APIError.new(result) if result[:ACK] !~ /Success/
+        raise Exception::APIError.new(result) if result[:ACK] !~ /^Success/
 
         result
       rescue Faraday::Error => e

@@ -9,6 +9,7 @@ module Paypal
   mattr_reader :api_version, default: '204.0'
   mattr_accessor :logger, default: Logger.new(STDERR, progname: 'Paypal::Express')
   mattr_writer :sandbox, default: false
+  mattr_accessor :http_adapter, :proxy, :ssl, :timeout
 
   ENDPOINT = {
     :production => 'https://www.paypal.com/cgi-bin/webscr',
@@ -41,6 +42,23 @@ module Paypal
 
   def self.sandbox!
     @@sandbox = true
+  end
+
+  def self.connection_options
+    options = {
+      url: self.endpoint,
+      request: {timeout: self.timeout || 30}
+    }
+    options[:proxy] = proxy if self.proxy
+    options[:ssl] = ssl if self.ssl
+
+    options
+  end
+
+  def self.connection
+    @@connection ||= Faraday.new(self.connection_options) do |faraday|
+      faraday.adapter self.http_adapter || Faraday.default_adapter
+    end
   end
 end
 

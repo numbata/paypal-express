@@ -9,7 +9,11 @@ module Paypal
     end
 
     def self.verify!(raw_post)
-      response = Faraday.post(endpoint, raw_post)
+      response = Paypal.connection.post do |req|
+        req.url endpoint
+        req.body = raw_post
+      end
+
       case response.body
       when 'VERIFIED'
         true
