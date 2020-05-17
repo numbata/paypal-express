@@ -11,11 +11,7 @@ module Paypal
       }
 
       def self.endpoint
-        if Paypal.sandbox?
-          ENDPOINT[:sandbox]
-        else
-          ENDPOINT[:production]
-        end
+        ENDPOINT[Paypal.environment]
       end
 
       def initialize(attributes = {})

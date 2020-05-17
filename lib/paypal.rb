@@ -6,8 +6,9 @@ require 'attr_optional'
 require 'rest_client'
 
 module Paypal
-  mattr_accessor :api_version
-  self.api_version = '204.0'
+  mattr_reader :api_version, default: '204.0'
+  mattr_accessor :logger, default: Logger.new(STDERR, progname: 'Paypal::Express')
+  mattr_writer :sandbox, default: false
 
   ENDPOINT = {
     :production => 'https://www.paypal.com/cgi-bin/webscr',
@@ -18,44 +19,29 @@ module Paypal
     :sandbox => 'https://www.sandbox.paypal.com/incontext'
   }
 
-  def self.endpoint
-    if sandbox?
-      Paypal::ENDPOINT[:sandbox]
-    else
-      Paypal::ENDPOINT[:production]
-    end
+  def self.environment
+    @@sandbox ? :sandbox : :production
   end
+
+  def self.endpoint
+    Paypal::ENDPOINT[environment]
+  end
+
   def self.popup_endpoint
-    if sandbox?
-      Paypal::POPUP_ENDPOINT[:sandbox]
-    else
-      Paypal::POPUP_ENDPOINT[:production]
-    end
+    Paypal::POPUP_ENDPOINT[environment]
   end
 
   def self.log(message, mode = :info)
-    self.logger.send mode, message
+    self.logger.send(mode, message)
   end
-  def self.logger
-    @@logger
-  end
-  def self.logger=(logger)
-    @@logger = logger
-  end
-  @@logger = Logger.new(STDERR)
-  @@logger.progname = 'Paypal::Express'
 
   def self.sandbox?
     @@sandbox
   end
-  def self.sandbox!
-    self.sandbox = true
-  end
-  def self.sandbox=(boolean)
-    @@sandbox = boolean
-  end
-  self.sandbox = false
 
+  def self.sandbox!
+    @@sandbox = true
+  end
 end
 
 require 'paypal/util'
