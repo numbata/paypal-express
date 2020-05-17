@@ -9,9 +9,7 @@ module Paypal
     end
 
     def self.verify!(raw_post)
-      response = RestClient.post(
-        endpoint, raw_post
-      )
+      response = Faraday.post(endpoint, raw_post)
       case response.body
       when 'VERIFIED'
         true

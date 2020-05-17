@@ -40,22 +40,22 @@ module Paypal
       private
 
       def post(method, params)
-        RestClient.post(self.class.endpoint, common_params.merge(params).merge(:METHOD => method))
+        Faraday.post(self.class.endpoint, common_params.merge(params).merge(:METHOD => method))
       end
 
       def handle_response
         response = yield
-        response = CGI.parse(response).inject({}) do |res, (k, v)|
-          res.merge!(k.to_sym => v.first.to_s)
-        end
-        case response[:ACK]
-        when 'Success', 'SuccessWithWarning'
-          response
-        else
-          raise Exception::APIError.new(response)
-        end
-      rescue RestClient::Exception => e
-        raise Exception::HttpError.new(e.http_code, e.message, e.http_body)
+        raise Exception::HttpError.new(response.status, response.reason_phrase, response.body) unless (200..310).include?(response.status)
+
+        result = CGI
+          .parse(response.body)
+          .each_with_object({}) { |(k, v), obj| obj[k.to_sym] = v.first.to_s }
+
+        raise Exception::APIError.new(result) if result[:ACK] !~ /Success/
+
+        result
+      rescue Faraday::Error => e
+        raise Exception::HttpError.new(e.response.status, e.response.reason_phrase, e.response.body)
       end
     end
   end
